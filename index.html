@@ -2794,46 +2794,60 @@ body.modal-open {
   </script>
 
 <script>
-/* ===== Google Sheet (Device_List) → หา Model ID จาก ANNO_INPUT ===== */
 const DEVICE_SHEET_ID   = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
 const DEVICE_SHEET_NAME = "Device_List";
-const DEVICE_RANGE      = "A:B"; // A = keyword, B = Sketchfab modelId
+const DEVICE_RANGE      = "A:B";
 
-// เก็บ model ปัจจุบันที่แสดงอยู่ เพื่อกันโหลดซ้ำ
+/* เก็บค่า modelId ปัจจุบัน (กันกรณีเรียกหลายรอบโดยไม่เปลี่ยน) */
 window.__currentSketchfabModelId = null;
+
+/* ดึง modelId จาก src ของ iframe เผื่อหน้าเพิ่งโหลด และ state ว่าง */
+function getModelIdFromSrc(src){
+  if (!src) return null;
+  try{
+    // รูปแบบ: https://sketchfab.com/models/<id>/embed?... 
+    const m = src.match(/\/models\/([^/]+)\/embed/i);
+    return m ? m[1] : null;
+  }catch{ return null; }
+}
 
 function normalize(s){
   return (s ?? "").toString().trim().replace(/\s+/g," ").toLowerCase();
 }
 function toSketchfabSrc(modelId){
-  return `https://sketchfab.com/models/${encodeURIComponent(modelId)}/embed?autostart=1&preload=1&annotation_cycle=3&ui_annotations=1&ui_infos=0&ui_controls=1&ui_watermark=0&dnt=1`;
+  return `https://sketchfab.com/models/${encodeURIComponent(modelId)}/embed`
+       + `?autostart=1&preload=1&annotation_cycle=3&ui_annotations=1&ui_infos=0&ui_controls=1&ui_watermark=0&dnt=1`;
 }
 
-/** ค้นหาใน A:B ตาม ANNO_INPUT (ต้องมีคำว่า "Device") แล้วอัปเดต iframe#sketchfabModel
- *  ถ้า modelId เหมือนเดิม → ไม่เปลี่ยน src (ไม่โหลดใหม่)
+/** ค้น A:B ตาม ANNO_INPUT (ต้องมีคำว่า "Device")
+ * ถ้า modelId ใหม่ต่างจากที่แสดงอยู่ → อัปเดต src (โหลดใหม่)
  */
 async function updateSketchfabByAnno(annoInput){
   const q = normalize(annoInput);
   const frame = document.getElementById("sketchfabModel");
-  const statusLog = (msg)=>console.debug("[SketchfabByAnno]", msg);
+  const log = (msg)=>console.debug("[SketchfabByAnno]", msg);
 
-  if (!frame){ statusLog("no #sketchfabModel"); return; }
-  if (!q.includes("device")){ statusLog('AnnoInput must contain "Device"'); return; }
+  if (!frame){ log("no #sketchfabModel"); return; }
+  if (!q.includes("device")){ log('AnnoInput must contain "Device"'); return; }
 
-  const gvizUrl = `https://docs.google.com/spreadsheets/d/${DEVICE_SHEET_ID}/gviz/tq` +
-                  `?tqx=out:json&sheet=${encodeURIComponent(DEVICE_SHEET_NAME)}&range=${encodeURIComponent(DEVICE_RANGE)}`;
+  // sync state จาก src ปัจจุบัน (กรณีเพิ่งเปิดหน้า)
+  if (!window.__currentSketchfabModelId){
+    window.__currentSketchfabModelId = getModelIdFromSrc(frame.src);
+  }
+
+  const gvizUrl = `https://docs.google.com/spreadsheets/d/${DEVICE_SHEET_ID}/gviz/tq`
+                + `?tqx=out:json&sheet=${encodeURIComponent(DEVICE_SHEET_NAME)}&range=${encodeURIComponent(DEVICE_RANGE)}`;
 
   try{
-    const resp = await fetch(gvizUrl, { cache:"no-store" });
-    const text = await resp.text();
+    const resp  = await fetch(gvizUrl, { cache:"no-store" });
+    const text  = await resp.text();
     const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?$/);
     if (!match) throw new Error("Bad gviz payload");
 
     const payload = JSON.parse(match[1]);
-    const rows = (payload?.table?.rows || []).map(r => ({
-      a: r?.c?.[0]?.v ? String(r.c[0].v) : "",
-      b: r?.c?.[1]?.v ? String(r.c[1].v) : ""
-    })).filter(r => r.a || r.b);
+    const rows = (payload?.table?.rows || [])
+      .map(r => ({ a: r?.c?.[0]?.v ? String(r.c[0].v) : "", b: r?.c?.[1]?.v ? String(r.c[1].v) : "" }))
+      .filter(r => r.a || r.b);
 
     // เลือกแถว: exact → partial (เลือกข้อความยาวสุด)
     const exact   = rows.filter(r => normalize(r.a) === q);
@@ -2841,19 +2855,21 @@ async function updateSketchfabByAnno(annoInput){
     const pick    = (list)=> list.sort((x,y)=>normalize(y.a).length - normalize(x.a).length)[0];
     const hit     = exact.length ? pick(exact) : (partial.length ? pick(partial) : null);
 
-    if (hit && hit.b){
-      const nextId = hit.b.trim();
-      // ✅ กันโหลดซ้ำ: ถ้า id เหมือนเดิม ไม่อัปเดต src
-      if (window.__currentSketchfabModelId === nextId){
-        statusLog(`same modelId (${nextId}) → skip reload`);
-        return;
-      }
-      window.__currentSketchfabModelId = nextId;
-      frame.src = toSketchfabSrc(nextId);
-      statusLog(`update to modelId=${nextId} from A="${hit.a}"`);
-    }else{
-      statusLog("no match or empty model id");
+    if (!hit || !hit.b){ log("no match or empty model id"); return; }
+
+    const nextId = hit.b.trim();
+    const currId = window.__currentSketchfabModelId || getModelIdFromSrc(frame.src);
+
+    if (currId && currId === nextId){
+      // ✅ id เดิม → ไม่ต้องโหลดใหม่
+      log(`same modelId (${nextId}) → skip`);
+      return;
     }
+
+    // 🔄 id เปลี่ยน → โหลดใหม่
+    window.__currentSketchfabModelId = nextId;
+    frame.src = toSketchfabSrc(nextId);
+    log(`update to modelId=${nextId} from A="${hit.a}"`);
   }catch(err){
     console.warn("updateSketchfabByAnno error:", err);
   }
