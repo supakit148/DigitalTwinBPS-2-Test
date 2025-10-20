@@ -1385,7 +1385,46 @@ body.modal-open {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}    
+}
+
+/* ===== Center column: 3D (left) + camera card (right) ===== */
+.cctv-col-center{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap);
+  z-index: 10000;
+  pointer-events: none;      /* คุมคลิกที่ child */
+}
+
+.cctv-col-center > *{ pointer-events: auto; }
+
+/* กล่อง 3D ด้านซ้าย */
+.model-card{
+  width: clamp(360px, 32vw, 640px);
+  aspect-ratio: 16 / 9;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+}
+
+.model-card iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* การ์ดกลางเดิมให้กว้างขึ้นเล็กน้อย */
+.cctv-col-center .glass-card{
+  width: clamp(320px, 28vw, 560px);
+  aspect-ratio: 16 / 9;
+}
+
     
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -1405,38 +1444,51 @@ body.modal-open {
       <div id="CCTV3" class="glass-card"><h32 id="name3">-</h32><img id="modalImg3"><h3 id="datetime3">-</h3></div>
       <div id="CCTV4" class="glass-card"><h32 id="name4">-</h32><img id="modalImg4"><h3 id="datetime4">-</h3></div>
     </div>
-    
+
     <!-- กล้องแนวตั้งกลาง -->
-    <div class="cctv-col-center">
-      <div id="CCTV9" class="glass-card"><h32 id="name9">-</h32><img id="modalImg9"><h3 id="datetime9">-</h3>
-      
-      <!-- ▶ ป้ายเข้า-ออก-คงอยู่ -->
-      <div class="io-pill">
-        <div class="io in" title="จำนวนคนเข้า">
-          <!-- enter -->
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 7h-5l1.8-1.8-1.4-1.4L12 7l3.4 3.2 1.4-1.4L15 7h5V5z"/>
-          </svg>
-          <span id="in9">0</span>
-        </div>
-        <div class="io out" title="จำนวนคนออก">
-          <!-- exit -->
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 9h-5l1.8 1.8-1.4 1.4L12 9l3.4-3.2 1.4 1.4L15 9h5v2z"/>
-          </svg>
-          <span id="out9">0</span>
-        </div>
-        <div class="io occ" title="จำนวนคงอยู่ภายในโซน">
-          <!-- occupancy -->
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 8a3 3 0 110-6 3 3 0 010 6zM1 20c0-2.5 4-4 6-4s6 1.5 6 4v1H1v-1zm13-9a3 3 0 110-6 3 3 0 010 6zm-2 9c0-1.2.4-2.3 1.1-3.2.7-.8 1.6-1.3 2.9-1.8 1.3.5 2.2 1 2.9 1.8.7.9 1.1 2 1.1 3.2v1H12v-1z"/>
-          </svg>
-          <span id="occ9">0</span>
-        </div>
+<div class="cctv-col-center">
+  <!-- ⬅ ซ้าย: กล่อง 3D Model -->
+  <div class="model-card">
+    <iframe
+      id="sketchfabModel"
+      title="3D Device Model"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen
+      loading="lazy"
+      src=""  <!-- จะถูกอัปเดตด้วย JS -->
+    ></iframe>
+  </div>
+
+  <!-- ขวา: การ์ดกล้องเดิม -->
+  <div id="CCTV9" class="glass-card">
+    <h32 id="name9">-</h32>
+    <img id="modalImg9">
+    <h3 id="datetime9">-</h3>
+
+    <!-- ▶ ป้ายเข้า-ออก-คงอยู่ -->
+    <div class="io-pill">
+      <div class="io in" title="จำนวนคนเข้า">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 7h-5l1.8-1.8-1.4-1.4L12 7l3.4 3.2 1.4-1.4L15 7h5V5z"/>
+        </svg>
+        <span id="in9">0</span>
       </div>
-      
+      <div class="io out" title="จำนวนคนออก">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 9h-5l1.8 1.8-1.4 1.4L12 9l3.4-3.2 1.4 1.4L15 9h5v2z"/>
+        </svg>
+        <span id="out9">0</span>
+      </div>
+      <div class="io occ" title="จำนวนคงอยู่ภายในโซน">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 8a3 3 0 110-6 3 3 0 010 6zM1 20c0-2.5 4-4 6-4s6 1.5 6 4v1H1v-1zm13-9a3 3 0 110-6 3 3 0 010 6zm-2 9c0-1.2.4-2.3 1.1-3.2.7-.8 1.6-1.3 2.9-1.8 1.3.5 2.2 1 2.9 1.8.7.9 1.1 2 1.1 3.2v1H12v-1z"/>
+        </svg>
+        <span id="occ9">0</span>
       </div>
     </div>
+  </div>
+</div>
+
     
     <!-- กล้องแนวตั้งฝั่งขวา -->
     <div class="cctv-col-right">
@@ -2700,6 +2752,64 @@ body.modal-open {
     setBackgroundByTime();
   </script>
 
+<script>
+/* ===== Google Sheet (Device_List) → หา Model ID จาก ANNO_INPUT ===== */
+const DEVICE_SHEET_ID   = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
+const DEVICE_SHEET_NAME = "Device_List";
+const DEVICE_RANGE      = "A:B"; // A = keyword, B = Sketchfab modelId
+
+function normalize(s){
+  return (s ?? "").toString().trim().replace(/\s+/g," ").toLowerCase();
+}
+function toSketchfabSrc(modelId){
+  return `https://sketchfab.com/models/${encodeURIComponent(modelId)}/embed?autostart=1&preload=1&annotation_cycle=3&ui_annotations=1&ui_infos=0&ui_controls=1&ui_watermark=0&dnt=1`;
+}
+
+/** ค้นหาใน A:B ตาม ANNO_INPUT (ต้องมีคำว่า "Device") แล้วอัปเดต iframe#sketchfabModel */
+async function updateSketchfabByAnno(annoInput){
+  const q = normalize(annoInput);
+  const frame = document.getElementById("sketchfabModel");
+  const statusLog = (msg)=>console.debug("[SketchfabByAnno]", msg);
+
+  if (!frame){ statusLog("no #sketchfabModel"); return; }
+  if (!q.includes("device")){ statusLog('AnnoInput must contain "Device"'); return; }
+
+  const gvizUrl = `https://docs.google.com/spreadsheets/d/${DEVICE_SHEET_ID}/gviz/tq` +
+                  `?tqx=out:json&sheet=${encodeURIComponent(DEVICE_SHEET_NAME)}&range=${encodeURIComponent(DEVICE_RANGE)}`;
+
+  try{
+    const resp = await fetch(gvizUrl, { cache:"no-store" });
+    const text = await resp.text();
+    const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?$/);
+    if (!match) throw new Error("Bad gviz payload");
+    const payload = JSON.parse(match[1]);
+    const rows = (payload?.table?.rows || []).map(r => ({
+      a: r?.c?.[0]?.v ? String(r.c[0].v) : "",
+      b: r?.c?.[1]?.v ? String(r.c[1].v) : ""
+    })).filter(r => r.a || r.b);
+
+    // จับคู่อย่างยืดหยุ่น: exact → partial (ยาวสุดก่อน)
+    const exact = rows.filter(r => normalize(r.a) === q);
+    const partial = rows.filter(r => {
+      const a = normalize(r.a);
+      return a.includes(q) || q.includes(a);
+    });
+    const pick = (list)=> list.sort((x,y)=>normalize(y.a).length - normalize(x.a).length)[0];
+    const hit = exact.length ? pick(exact) : (partial.length ? pick(partial) : null);
+
+    if (hit && hit.b){
+      frame.src = toSketchfabSrc(hit.b);
+      statusLog(`match A="${hit.a}" → model=${hit.b}`);
+    }else{
+      statusLog("no match or empty model id");
+    }
+  }catch(err){
+    console.warn("updateSketchfabByAnno error:", err);
+  }
+}
+</script>
+
+
   <script>
     function formatCeil2(num) {
         const n = parseFloat(num);
@@ -2925,6 +3035,10 @@ body.modal-open {
                   else if (v.includes('ALERT')) p21.classList.add('is-alert');
                   else                          p21.classList.add('is-normal');
                 }
+
+                // ⬇️ เพิ่มบรรทัดนี้
+                const ANNO_INPUT = `Device ${cameraId}`;
+                updateSketchfabByAnno(ANNO_INPUT);
 
               break;
             }
