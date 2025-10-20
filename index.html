@@ -2799,6 +2799,9 @@ const DEVICE_SHEET_ID   = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
 const DEVICE_SHEET_NAME = "Device_List";
 const DEVICE_RANGE      = "A:B"; // A = keyword, B = Sketchfab modelId
 
+// เก็บ model ปัจจุบันที่แสดงอยู่ เพื่อกันโหลดซ้ำ
+window.__currentSketchfabModelId = null;
+
 function normalize(s){
   return (s ?? "").toString().trim().replace(/\s+/g," ").toLowerCase();
 }
@@ -2806,7 +2809,9 @@ function toSketchfabSrc(modelId){
   return `https://sketchfab.com/models/${encodeURIComponent(modelId)}/embed?autostart=1&preload=1&annotation_cycle=3&ui_annotations=1&ui_infos=0&ui_controls=1&ui_watermark=0&dnt=1`;
 }
 
-/** ค้นหาใน A:B ตาม ANNO_INPUT (ต้องมีคำว่า "Device") แล้วอัปเดต iframe#sketchfabModel */
+/** ค้นหาใน A:B ตาม ANNO_INPUT (ต้องมีคำว่า "Device") แล้วอัปเดต iframe#sketchfabModel
+ *  ถ้า modelId เหมือนเดิม → ไม่เปลี่ยน src (ไม่โหลดใหม่)
+ */
 async function updateSketchfabByAnno(annoInput){
   const q = normalize(annoInput);
   const frame = document.getElementById("sketchfabModel");
@@ -2823,24 +2828,29 @@ async function updateSketchfabByAnno(annoInput){
     const text = await resp.text();
     const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?$/);
     if (!match) throw new Error("Bad gviz payload");
+
     const payload = JSON.parse(match[1]);
     const rows = (payload?.table?.rows || []).map(r => ({
       a: r?.c?.[0]?.v ? String(r.c[0].v) : "",
       b: r?.c?.[1]?.v ? String(r.c[1].v) : ""
     })).filter(r => r.a || r.b);
 
-    // จับคู่อย่างยืดหยุ่น: exact → partial (ยาวสุดก่อน)
-    const exact = rows.filter(r => normalize(r.a) === q);
-    const partial = rows.filter(r => {
-      const a = normalize(r.a);
-      return a.includes(q) || q.includes(a);
-    });
-    const pick = (list)=> list.sort((x,y)=>normalize(y.a).length - normalize(x.a).length)[0];
-    const hit = exact.length ? pick(exact) : (partial.length ? pick(partial) : null);
+    // เลือกแถว: exact → partial (เลือกข้อความยาวสุด)
+    const exact   = rows.filter(r => normalize(r.a) === q);
+    const partial = rows.filter(r => { const a = normalize(r.a); return a.includes(q) || q.includes(a); });
+    const pick    = (list)=> list.sort((x,y)=>normalize(y.a).length - normalize(x.a).length)[0];
+    const hit     = exact.length ? pick(exact) : (partial.length ? pick(partial) : null);
 
     if (hit && hit.b){
-      frame.src = toSketchfabSrc(hit.b);
-      statusLog(`match A="${hit.a}" → model=${hit.b}`);
+      const nextId = hit.b.trim();
+      // ✅ กันโหลดซ้ำ: ถ้า id เหมือนเดิม ไม่อัปเดต src
+      if (window.__currentSketchfabModelId === nextId){
+        statusLog(`same modelId (${nextId}) → skip reload`);
+        return;
+      }
+      window.__currentSketchfabModelId = nextId;
+      frame.src = toSketchfabSrc(nextId);
+      statusLog(`update to modelId=${nextId} from A="${hit.a}"`);
     }else{
       statusLog("no match or empty model id");
     }
