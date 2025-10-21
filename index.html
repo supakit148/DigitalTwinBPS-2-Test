@@ -3176,7 +3176,7 @@ async function updateSketchfabByAnno(annoInput){
               highlightMiniElevator(CameraName);
 
               // ==== ไฮไลต์ Neon Elevator ตาม CameraName ====
-              const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','Roof_Level'];
+              const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','5th_Floor'];
               
               // เช็กว่าชื่อกล้องตรงกับชั้นใด
               const matchedFloor = FLOOR_KEYS.find(f => CameraName.includes(f));
@@ -3226,7 +3226,7 @@ async function updateSketchfabByAnno(annoInput){
           api.addEventListener('annotationFocus',  handler);
           api.addEventListener('annotationSelect', handler);
 
-          const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','Roof_Level'];
+          const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','5th_Floor'];
           // เช็กว่าชื่อกล้องตรงกับชั้นใด
           const matchedFloor = FLOOR_KEYS.find(f => CameraName.includes(f));
           
@@ -4972,7 +4972,7 @@ function runDemo(){
 
   <script>
     function highlightMiniElevator(CameraName) {
-    const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','Roof_Level'];
+    const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','5th_Floor'];
     const matched = FLOOR_KEYS.find(f => CameraName.includes(f));
     const stack = document.getElementById('stackMini');
     if (!stack) return;
