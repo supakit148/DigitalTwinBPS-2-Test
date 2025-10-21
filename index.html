@@ -948,7 +948,7 @@ body.modal-open {
 .mini-chip[data-key="2nd_Floor"]{ border-color:#00d1ff99; }
 .mini-chip[data-key="3rd_Floor"]{ border-color:#38bdf899; }
 .mini-chip[data-key="4th_Floor"]{ border-color:#a78bfa99; }
-.mini-chip[data-key="Roof_Level"]{ border-color:#22d3ee99; } /* ใช้แทน 5F */
+.mini-chip[data-key="5th_Floor"]{ border-color:#22d3ee99; } /* ใช้แทน 5F */
 
 /* ===== Floor line layout (ซ้าย: stack + badge, ขวา: number) ===== */
 .floor-card .floor-line{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; width:100%; }
@@ -3363,7 +3363,7 @@ async function updateSketchfabByAnno(annoInput){
 <script>
   var dataFloor = [{
     values: [15, 20, 25, 18, 22],  
-    labels: ['1st_Floor', '2nd_Floor', '3rd_Floor', '4th_Floor', '5th_Floor (M_Floor)'],
+    labels: ['1st_Floor', '2nd_Floor', '3rd_Floor', '4th_Floor', '5th_Floor'],
     type: 'pie',
     hole: .4, // Donut
     marker: {
@@ -3851,7 +3851,7 @@ function updateVisibility3D(){
     '2nd_Floor':   '2F',
     '3rd_Floor':   '3F',
     '4th_Floor':   '4F',
-    'Roof_Level':  '5F'
+    '5th_Floor':  '5F'
   };
 
   // สร้าง spec ของปุ่ม: Home + แต่ละชั้นตาม ANNO_TO_MODEL (ลำดับอิงการประกาศ)
@@ -3934,7 +3934,7 @@ function updateVisibility3D(){
     '2nd_Floor':   '2F',
     '3rd_Floor':   '3F',
     '4th_Floor':   '4F',
-    'Roof_Level':  '5F'
+    '5th_Floor':  '5F'
   };
 
   const FLOOR_BTNS = [
@@ -4243,7 +4243,7 @@ checkAlarmAndFocus();
   };
 
   // ลำดับชั้นล่าง→บน (ตามที่คุณใช้ใน 3D)
-  const FLOORS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','Roof_Level'];
+  const FLOORS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','5th_Floor'];
 
   const iso   = document.getElementById('isoMini');
   const stack = document.getElementById('stackMini');
