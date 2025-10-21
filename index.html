@@ -4965,33 +4965,6 @@ function runDemo(){
   <img id="modalImg10" alt="Bottom Camera">
 </div>
 
-<script>
-/* รันครั้งเดียวใน DevTools Console ก็ได้ */
-(function patchThemeVars(){
-  // mapping สีที่พบบ่อย → ตัวแปรธีม
-  const MAP = new Map([
-    [/#00fff?f?\b/gi, 'var(--glow)'],
-    [/#0ff\b/gi,       'var(--glow)'],
-    [/rgba?\(\s*0\s*,\s*255\s*,\s*255\s*(?:,[^)]+)?\)/gi, 'var(--glow)'],
-    [/#ffffff\b/gi,    'var(--text)'],
-    [/rgba?\(\s*255\s*,\s*255\s*,\s*255\s*,?\s*0?\.?0?8?\)/gi, 'color-mix(in srgb, var(--text) 8%, transparent)'],
-    [/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,?\s*0?\.6?5?\)/gi, 'color-mix(in srgb, #000 65%, transparent)'],
-    [/rgba?\(\s*20\s*,\s*20\s*,\s*20\s*,\s*0\.6\)/gi, 'var(--panel)'],
-  ]);
-
-  const styles = [...document.querySelectorAll('style')];
-  let replaced = 0;
-
-  for (const tag of styles) {
-    let css = tag.textContent;
-    MAP.forEach((to, re) => { css = css.replace(re, to); });
-    replaced += (tag.textContent !== css);
-    tag.textContent = css;
-  }
-  console.log('Theme patch done. Modified blocks:', replaced);
-})();
-</script>
-
 
 </body>
 </html>
