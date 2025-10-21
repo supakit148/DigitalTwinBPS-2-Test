@@ -25,7 +25,6 @@
       --top-h: 64px;     /* ความสูง .top */
       --left-w: 320px;   /* ความกว้าง .left */
       --right-w: 300px;  /* ความกว้างที่กินจริงของ .right */
-      transition: all 0.8s ease-in-out;
     }
 
     html, body {
@@ -3145,40 +3144,6 @@ async function updateSketchfabByAnno(annoInput){
   // ใช้ฟังก์ชันเดิมของคุณ: formatCeil2(), getTextFromGoogleSheet() ฯลฯ
 
   function initModel(uid){
-    // ======= THEME BY FLOOR (ล้ำยุคสุด ๆ) =======
-    const floorThemes = {
-      "1st_Floor": {
-        glow: "#00ffffaa", text: "#e0ffff", panel: "rgba(5,15,25,0.6)"
-      },
-      "M_Floor": {
-        glow: "#ff49ffaa", text: "#ffe6ff", panel: "rgba(25,10,30,0.6)"
-      },
-      "2nd_Floor": {
-        glow: "#9b4dffaa", text: "#f0e6ff", panel: "rgba(20,10,35,0.6)"
-      },
-      "3rd_Floor": {
-        glow: "#a6ff4daa", text: "#f4ffe6", panel: "rgba(10,25,15,0.6)"
-      },
-      "4th_Floor": {
-        glow: "#ffc14daa", text: "#fff7e6", panel: "rgba(30,20,5,0.6)"
-      },
-      "Roof_Level": {
-        glow: "#ff3366aa", text: "#ffe6ee", panel: "rgba(25,5,10,0.6)"
-      }
-    };
-    
-    // ======= APPLY THEME FUNCTION =======
-    function applyTheme(theme) {
-      const root = document.documentElement;
-      if (!theme) return;
-      root.style.setProperty('--glow', theme.glow);
-      root.style.setProperty('--text', theme.text);
-      root.style.setProperty('--panel', theme.panel);
-      root.style.setProperty('--neon', `0 0 8px ${theme.glow}, 0 0 16px ${theme.glow}`);
-      root.style.setProperty('--neon2', theme.glow);
-    }
-      
-      
     if (activeUID && uid === activeUID) return;   // กันโหลดซ้ำตัวเดิม
     
     activeUID = uid;
@@ -3203,14 +3168,6 @@ async function updateSketchfabByAnno(annoInput){
               renderFloorMapFromSheet(CameraName, /* activeName */ CameraName);
               document.getElementById('cameraNameBox1').innerText = "Digital Building - " + CameraName;
               document.getElementById('cameraNameBox2').innerText = "Digital Building - " + CameraName;
-              
-              // 🌈 ถ้ามีชื่อชั้นอยู่ใน theme mapping → เปลี่ยนธีม
-                for (const floor in floorThemes) {
-                  if (CameraName.includes(floor)) {
-                    applyTheme(floorThemes[floor]);
-                    break;
-                  }
-                }
 
               // โหลดข้อมูลแผ่น/การ์ด/ค่า metric ตามชื่อ CameraName (ฟังก์ชันเดิมของคุณ)
               getTextFromGoogleSheet(CameraName);
