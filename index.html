@@ -3172,6 +3172,29 @@ async function updateSketchfabByAnno(annoInput){
               // โหลดข้อมูลแผ่น/การ์ด/ค่า metric ตามชื่อ CameraName (ฟังก์ชันเดิมของคุณ)
               getTextFromGoogleSheet(CameraName);
 
+              // ==== ไฮไลต์ Neon Elevator ตาม CameraName ====
+              const FLOOR_KEYS = ['1st_Floor','M_Floor','2nd_Floor','3rd_Floor','4th_Floor','Roof_Level'];
+              
+              // เช็กว่าชื่อกล้องตรงกับชั้นใด
+              const matchedFloor = FLOOR_KEYS.find(f => CameraName.includes(f));
+              
+              const stack = document.getElementById('stackMini');
+              if (stack) {
+                const layers = [...stack.querySelectorAll('.layer-mini')];
+                stack.classList.remove('all-mode');
+                layers.forEach(l => l.classList.remove('active'));
+              
+                if (matchedFloor) {
+                  // ถ้ามีคำว่า 1st_Floor หรือชั้นอื่น → ระบายสีเฉพาะชั้นนั้น
+                  const target = layers.find(l => l.dataset.key === matchedFloor);
+                  if (target) target.classList.add('active');
+                } else {
+                  // ถ้าไม่ตรงกับชื่อชั้น → แสดงโหมดรวม (ทุกชั้น)
+                  stack.classList.add('all-mode');
+                  layers.forEach(l => l.classList.add('active'));
+                }
+              }
+
               // BUILDING vs FLOOR label + ซ่อน/โชว์การ์ด (ตรรกะเดิม)
               if (CameraName === "BPS_HQ") {
                 document.getElementById('BuildorFloor').innerText = "BUILDING";
