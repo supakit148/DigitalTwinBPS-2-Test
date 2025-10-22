@@ -1466,67 +1466,6 @@ body.modal-open {
   right: 6px;
   bottom: 6px;
 }
-
-/* ===== Layout: image+3D (left) + metrics (right) ภายในการ์ด #CCTV9 ===== */
-#CCTV9 .media-and-metrics{
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-}
-
-/* คอลัมน์ซ้าย: รูป + เวลา + 3D */
-#CCTV9 .media-col{
-  flex: 1 1 66%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* คอลัมน์ขวา: กริดค่าไฟฟ้า */
-#CCTV9 .metrics-col{
-  flex: 0 0 clamp(220px, 22vw, 300px);
-  display: flex;
-}
-
-/* ให้กริดกินเต็มคอลัมน์ขวา และอ่านง่ายเป็นแถวเดียว (มือถือค่อยแตกแถว) */
-#CCTV9 .metrics-col .electrical-grid{
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;   /* 1 คอลัมน์ในแถบขวา */
-  gap: 12px;
-}
-
-/* การ์ดเมตริกในคอลัมน์ขวาให้สูงกำลังดี */
-#CCTV9 .metrics-col .electrical-grid .metric{
-  min-height: 72px;
-}
-
-/* จอใหญ่ขึ้นหน่อย ค่อยปรับเป็น 2 คอลัมน์เพื่อใช้พื้นที่ */
-@media (min-width: 1440px){
-  #CCTV9 .metrics-col .electrical-grid{
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ให้การ์ด #CCTV9 สูงตามเนื้อหา */
-#CCTV9.glass-card{
-  aspect-ratio: auto;
-  display: block;   /* override ที่ตั้งเป็น flex ถ้ามี */
-  position: relative;
-}
-
-/* เวลา (#datetime9) ให้คงสไตล์เดิม แต่ไม่บังรูป */
-#CCTV9 h3#datetime9{
-  position: static;
-  align-self: flex-end;   /* ดันชิดขวาภายใน media-col */
-}
-
-/* io-pill ยังยึดมุมขวาล่างของการ์ดเหมือนเดิม */
-#CCTV9 .io-pill{
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-}
     
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -1547,48 +1486,49 @@ body.modal-open {
       <div id="CCTV4" class="glass-card"><h32 id="name4">-</h32><img id="modalImg4"><h3 id="datetime4">-</h3></div>
     </div>
 
-    <!-- กล้องแนวกลาง -->
-<div class="media-and-metrics">
-  <!-- ซ้าย: รูป + เวลา + 3D -->
-  <div class="media-col">
-    <img id="modalImg9" alt="">
-    <h3 id="datetime9">-</h3>
+    <!-- กล้องแนวตั้งกลาง -->
+    <div class="cctv-col-center">
+      <div id="CCTV9" class="glass-card">
+        <h32 id="name9">-</h32>
+        <!-- รูปกล้อง -->
+        <img id="modalImg9" alt="">
+        <h3 id="datetime9">-</h3>
+    
+        <!-- 🔽 3D Model อยู่ถัดลงมาจากรูป -->
+        <div class="model3d-wrap">
+          <iframe
+            id="sketchfabModel"
+            title="3D Device Model"
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            allowfullscreen
+            loading="lazy"
+            src="">
+          </iframe>
+        </div>
 
-    <div class="model3d-wrap">
-      <iframe
-        id="sketchfabModel"
-        title="3D Device Model"
-        allow="autoplay; fullscreen; xr-spatial-tracking"
-        allowfullscreen
-        loading="lazy"
-        src="">
-      </iframe>
+    <!-- ▶ ป้ายเข้า-ออก-คงอยู่ -->
+    <div class="io-pill">
+      <div class="io in" title="จำนวนคนเข้า">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 7h-5l1.8-1.8-1.4-1.4L12 7l3.4 3.2 1.4-1.4L15 7h5V5z"/>
+        </svg>
+        <span id="in9">0</span>
+      </div>
+      <div class="io out" title="จำนวนคนออก">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 9h-5l1.8 1.8-1.4 1.4L12 9l3.4-3.2 1.4 1.4L15 9h5v2z"/>
+        </svg>
+        <span id="out9">0</span>
+      </div>
+      <div class="io occ" title="จำนวนคงอยู่ภายในโซน">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 8a3 3 0 110-6 3 3 0 010 6zM1 20c0-2.5 4-4 6-4s6 1.5 6 4v1H1v-1zm13-9a3 3 0 110-6 3 3 0 010 6zm-2 9c0-1.2.4-2.3 1.1-3.2.7-.8 1.6-1.3 2.9-1.8 1.3.5 2.2 1 2.9 1.8.7.9 1.1 2 1.1 3.2v1H12v-1z"/>
+        </svg>
+        <span id="occ9">0</span>
+      </div>
     </div>
   </div>
-
-  <!-- ขวา: electrical-grid -->
-  <aside class="metrics-col">
-    <div class="electrical-grid">
-      <div class="metric">
-        <strong style="color: #0ff;">Voltage</strong>
-        <div id="infoBox6">-</div>
-      </div>
-      <div class="metric">
-        <strong style="color: #0ff;">Current</strong>
-        <div id="infoBox7">-</div>
-      </div>
-      <div class="metric">
-        <strong style="color: #0ff;">Frequency</strong>
-        <div id="infoBox8">-</div>
-      </div>
-      <div class="metric">
-        <strong style="color: #0ff;">Power</strong>
-        <div id="infoBox9">-</div>
-      </div>
-    </div>
-  </aside>
 </div>
-
 
     
     <!-- กล้องแนวตั้งฝั่งขวา -->
@@ -1981,7 +1921,24 @@ body.modal-open {
         </iframe>
       </div>
         
-      <br></br>
+          <div class="electrical-grid">
+            <div class="metric">
+              <strong style="color: #0ff;">Voltage</strong>
+              <div id="infoBox6">-</div>
+            </div>
+            <div class="metric">
+              <strong style="color: #0ff;">Current</strong>
+              <div id="infoBox7">-</div>
+            </div>
+            <div class="metric">
+              <strong style="color: #0ff;">Frequency</strong>
+              <div id="infoBox8">-</div>
+            </div>
+            <div class="metric">
+              <strong style="color: #0ff;">Power</strong>
+              <div id="infoBox9">-</div>
+            </div>
+          </div><br></br>
           <h3>Electrical Floor Distribution</h3>
           <div id="floorDonut" style="width:100%; height:300px;"></div>
       </div>
