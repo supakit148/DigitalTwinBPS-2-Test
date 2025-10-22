@@ -1466,6 +1466,44 @@ body.modal-open {
   right: 6px;
   bottom: 6px;
 }
+
+/* ✅ Layout ภาพ + 3D + electrical-grid */
+.cctv-layout {
+  display: flex;
+  flex-direction: row;       /* วางแนวนอน */
+  align-items: flex-start;   /* ชิดบน */
+  justify-content: center;   /* กึ่งกลางในแนวนอน */
+  gap: 20px;                 /* ระยะห่างระหว่างซ้ายขวา */
+  margin-top: 10px;
+}
+
+.cctv-layout .left-panel {
+  flex: 1 1 65%;             /* รูปและโมเดลกว้างกว่า */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cctv-layout .right-panel {
+  flex: 0 0 30%;             /* กริดไฟฟ้าอยู่ขวา กินประมาณ 30% */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.cctv-layout .right-panel .electrical-grid {
+  grid-template-columns: 1fr; /* แสดง metric เรียงลง */
+}
+
+@media (max-width: 900px) {
+  .cctv-layout {
+    flex-direction: column;  /* มือถือ → เรียงแนวตั้ง */
+  }
+  .cctv-layout .right-panel {
+    flex: 1 1 100%;
+  }
+}
+
     
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -1487,44 +1525,40 @@ body.modal-open {
     </div>
 
     <!-- กล้องแนวตั้งกลาง -->
-    <div class="cctv-col-center">
-      <div id="CCTV9" class="glass-card">
-        <h32 id="name9">-</h32>
-        <!-- รูปกล้อง -->
-        <img id="modalImg9" alt="">
-        <h3 id="datetime9">-</h3>
-    
-        <!-- 🔽 3D Model อยู่ถัดลงมาจากรูป -->
-        <div class="model3d-wrap">
-          <iframe
-            id="sketchfabModel"
-            title="3D Device Model"
-            allow="autoplay; fullscreen; xr-spatial-tracking"
-            allowfullscreen
-            loading="lazy"
-            src="">
-          </iframe>
-        </div>
+<div class="cctv-layout">
+  <!-- ฝั่งซ้าย: รูป + โมเดล -->
+  <div class="left-panel">
+    <img id="modalImg9" alt="">
+    <div class="model3d-wrap">
+      <iframe
+        id="sketchfabModel"
+        title="3D Device Model"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        allowfullscreen
+        loading="lazy"
+        src="">
+      </iframe>
+    </div>
+  </div>
 
-    <!-- ▶ ป้ายเข้า-ออก-คงอยู่ -->
-    <div class="io-pill">
-      <div class="io in" title="จำนวนคนเข้า">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 7h-5l1.8-1.8-1.4-1.4L12 7l3.4 3.2 1.4-1.4L15 7h5V5z"/>
-        </svg>
-        <span id="in9">0</span>
+  <!-- ฝั่งขวา: electrical-grid -->
+  <div class="right-panel">
+    <div class="electrical-grid">
+      <div class="metric">
+        <strong style="color: #0ff;">Voltage</strong>
+        <div>-</div> 
       </div>
-      <div class="io out" title="จำนวนคนออก">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2a3 3 0 110 6 3 3 0 010-6zm-6.5 17c0-2.5 5-3.9 6.5-3.9S18.5 16.5 18.5 19v1H5.5v-1zM20 9h-5l1.8 1.8-1.4 1.4L12 9l3.4-3.2 1.4 1.4L15 9h5v2z"/>
-        </svg>
-        <span id="out9">0</span>
+      <div class="metric">
+        <strong style="color: #0ff;">Current</strong>
+        <div>-</div> 
       </div>
-      <div class="io occ" title="จำนวนคงอยู่ภายในโซน">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M7 8a3 3 0 110-6 3 3 0 010 6zM1 20c0-2.5 4-4 6-4s6 1.5 6 4v1H1v-1zm13-9a3 3 0 110-6 3 3 0 010 6zm-2 9c0-1.2.4-2.3 1.1-3.2.7-.8 1.6-1.3 2.9-1.8 1.3.5 2.2 1 2.9 1.8.7.9 1.1 2 1.1 3.2v1H12v-1z"/>
-        </svg>
-        <span id="occ9">0</span>
+      <div class="metric">
+        <strong style="color: #0ff;">Frequency</strong>
+        <div>-</div> 
+      </div>
+      <div class="metric">
+        <strong style="color: #0ff;">Power</strong>
+        <div>-</div> 
       </div>
     </div>
   </div>
