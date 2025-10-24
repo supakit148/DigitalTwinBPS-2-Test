@@ -2901,7 +2901,7 @@ async function updateSketchfabByAnno(annoInput){
         .then(data => {
           const jsonData = JSON.parse(data.substr(47).slice(0, -2));
           const rows = jsonData.table.rows;
-          const header = rows[0].c; //header
+          const cols = jsonData.table.cols; //header
 
           for (let i = 0; i < rows.length; i++) {
             const row = rows[i].c;
@@ -3038,7 +3038,8 @@ async function updateSketchfabByAnno(annoInput){
                 const para3 = row[5]?.v ?? 'ไม่พบข้อมูล';
                 const para4 = row[6]?.v ?? 'ไม่พบข้อมูล';
 
-                const header_para5 = header[7] ?? 'ไม่พบข้อมูล';
+                // คอลัมน์ที่ 8 (H) คือ index 7 แบบ 0-based
+                const header_para5 = cols[7]?.label || cols[7]?.id || 'ไม่พบข้อมูล';
                 const header_para6 = header[8]?.v ?? 'ไม่พบข้อมูล';
                 const header_para7 = header[9]?.v ?? 'ไม่พบข้อมูล';
                 const header_para8 = header[10]?.v ?? 'ไม่พบข้อมูล';
@@ -3070,7 +3071,7 @@ async function updateSketchfabByAnno(annoInput){
                 document.getElementById("infoBox4").innerHTML = para3;
                 document.getElementById("infoBox5").innerHTML = para4;
 
-                document.getElementById("infoBox6_header").innerHTML  = header_para5;
+                document.getElementById("infoBox6_header").textContent  = header_para5;
                 document.getElementById("infoBox7_header").innerHTML  = header_para6;
                 document.getElementById("infoBox8_header").innerHTML  = header_para7;
                 document.getElementById("infoBox9_header").innerHTML  = header_para8;
