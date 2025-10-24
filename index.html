@@ -2901,7 +2901,7 @@ async function updateSketchfabByAnno(annoInput){
         .then(data => {
           const jsonData = JSON.parse(data.substr(47).slice(0, -2));
           const rows = jsonData.table.rows;
-          const header = rows[1].c; //header
+          const header = rows[0].c; //header
 
           for (let i = 0; i < rows.length; i++) {
             const row = rows[i].c;
