@@ -1525,6 +1525,7 @@ body.modal-open {
     </div>
         
           <!-- ตำแหน่ง electrical-grid -->
+        <div class="card">
           <div class="electrical-grid">
             <div class="metric">
               <strong style="color: #0ff;">Voltage</strong>
@@ -1543,6 +1544,7 @@ body.modal-open {
               <div id="infoBox9">-</div>
             </div>
           </div>
+        </div>
 
         <h32 id="name9">-</h32>
         <!-- รูปกล้อง -->
@@ -2903,23 +2905,44 @@ async function updateSketchfabByAnno(annoInput){
           // ✅ อ่านหัวคอลัมน์จาก cols (เพราะ GViz ย้ายแถวแรกไปไว้ที่นี่)
           const cols = jsonData.table.cols || [];
           
-          const labelVoltage   = cols[7]?.label ?? cols[7]?.id ?? "Voltage";   // H1
-          const labelCurrent   = cols[8]?.label ?? cols[8]?.id ?? "Current";   // I1
-          const labelFrequency = cols[9]?.label ?? cols[9]?.id ?? "Frequency"; // J1
-          const labelPower     = cols[10]?.label ?? cols[10]?.id ?? "Power";   // K1
-          
-          // อัปเดต <strong> โดยเล็งพี่น้องก่อนหน้า #infoBox6–9
-          const s6 = document.querySelector("#infoBox6")?.previousElementSibling;
-          const s7 = document.querySelector("#infoBox7")?.previousElementSibling;
-          const s8 = document.querySelector("#infoBox8")?.previousElementSibling;
-          const s9 = document.querySelector("#infoBox9")?.previousElementSibling;
-          
-          if (s6) s6.textContent = labelVoltage;
-          if (s7) s7.textContent = labelCurrent;
-          if (s8) s8.textContent = labelFrequency;
-          if (s9) s9.textContent = labelPower;
-          /////////////
 
+      // ---------- NEW: mapping index ตามคำใน cameraId ----------
+      function pickIndexByCamera(id) {
+        const s = (id || "").toLowerCase();
+        if (s.includes("aircondenser")) return { base: 7,  suffix: ["V","A","Hz","kW"] }; // H..K
+        if (s.includes("cctv"))        return { base: 3,  suffix: ["","","",""]        }; // D..G
+        if (s.includes("water"))       return { base: 11, suffix: ["","","",""]        }; // L..O
+        if (s.includes("air"))         return { base: 15, suffix: ["","","",""]        }; // P..S
+        // ค่าเริ่มต้น (กรณีไม่เข้าเงื่อนไขใด)
+        return { base: 7, suffix: ["V","A","Hz","kW"] };
+      }
+
+      // helper: แสดงเลขสวย ๆ เฉพาะค่าที่เป็นตัวเลข
+      const fmt = (v, suf="") => {
+        const n = parseFloat(v);
+        if (Number.isFinite(n)) return (Math.ceil(n * 100) / 100) + suf;
+        return (v ?? "ไม่พบข้อมูล"); // ถ้าไม่ใช่ตัวเลขให้คืนค่าเดิม (ไม่เติมหน่วย)
+      };
+
+      const { base, suffix } = pickIndexByCamera(cameraId);
+
+      // ✅ อัปเดต "หัวข้อ" (strong) จาก header ของคอลัมน์ base..base+3
+      const s6 = document.querySelector("#infoBox6")?.previousElementSibling;
+      const s7 = document.querySelector("#infoBox7")?.previousElementSibling;
+      const s8 = document.querySelector("#infoBox8")?.previousElementSibling;
+      const s9 = document.querySelector("#infoBox9")?.previousElementSibling;
+
+      const label0 = cols[base]?.label  ?? cols[base]?.id  ?? (s6?.textContent || "Metric 1");
+      const label1 = cols[base+1]?.label?? cols[base+1]?.id?? (s7?.textContent || "Metric 2");
+      const label2 = cols[base+2]?.label?? cols[base+2]?.id?? (s8?.textContent || "Metric 3");
+      const label3 = cols[base+3]?.label?? cols[base+3]?.id?? (s9?.textContent || "Metric 4");
+
+      if (s6) s6.textContent = label0;
+      if (s7) s7.textContent = label1;
+      if (s8) s8.textContent = label2;
+      if (s9) s9.textContent = label3;
+      // ---------- END NEW ----------
+          
           for (let i = 0; i < rows.length; i++) {
             const row = rows[i].c;
             if (row[0] && row[0].v === cameraId) {
@@ -3053,11 +3076,6 @@ async function updateSketchfabByAnno(annoInput){
                 const para2 = row[4]?.v ?? 'ไม่พบข้อมูล';
                 const para3 = row[5]?.v ?? 'ไม่พบข้อมูล';
                 const para4 = row[6]?.v ?? 'ไม่พบข้อมูล';
-                              
-                const para5 = row[7]?.v ?? 'ไม่พบข้อมูล';
-                const para6 = row[8]?.v ?? 'ไม่พบข้อมูล';
-                const para7 = row[9]?.v ?? 'ไม่พบข้อมูล';
-                const para8 = row[10]?.v ?? 'ไม่พบข้อมูล';
                                 
                 const para9 = row[11]?.v ?? 'ไม่พบข้อมูล';
                 const para10 = row[12]?.v ?? 'ไม่พบข้อมูล';
@@ -3081,10 +3099,17 @@ async function updateSketchfabByAnno(annoInput){
                 document.getElementById("infoBox4").innerHTML = para3;
                 document.getElementById("infoBox5").innerHTML = para4;
                              
-                document.getElementById("infoBox6").innerHTML  = formatCeil2(para5)  + "V";
-                document.getElementById("infoBox7").innerHTML  = formatCeil2(para6)  + "A";
-                document.getElementById("infoBox8").innerHTML  = formatCeil2(para7)  + "Hz";
-                document.getElementById("infoBox9").innerHTML  = formatCeil2(para8)  + "kW";
+                // ✅ อัปเดตค่าชุด infoBox6–9 ตาม index base..base+3
+                const v0 = row[base]?.v   ?? "ไม่พบข้อมูล";
+                const v1 = row[base+1]?.v ?? "ไม่พบข้อมูล";
+                const v2 = row[base+2]?.v ?? "ไม่พบข้อมูล";
+                const v3 = row[base+3]?.v ?? "ไม่พบข้อมูล";
+      
+                document.getElementById("infoBox6").innerHTML = fmt(v0, suffix[0]);
+                document.getElementById("infoBox7").innerHTML = fmt(v1, suffix[1]);
+                document.getElementById("infoBox8").innerHTML = fmt(v2, suffix[2]);
+                document.getElementById("infoBox9").innerHTML = fmt(v3, suffix[3]);
+                //
                                 
                 document.getElementById("infoBox10").innerHTML = formatCeil2(para9)  + "<br>L/min";
                 document.getElementById("infoBox11").innerHTML = formatCeil2(para10) + "<br>Days";
