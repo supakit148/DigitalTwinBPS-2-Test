@@ -2900,15 +2900,15 @@ async function updateSketchfabByAnno(annoInput){
           const jsonData = JSON.parse(data.substr(47).slice(0, -2));
           const rows = jsonData.table.rows;
 
-          // ⬇️ วางบล็อกนี้ต่อจาก const rows = jsonData.table.rows; ได้เลย
-          // อัปเดต Label จาก H1–K1 (index 7–10 ของแถวแรกในชีต)
-          const top = rows?.[0]?.c || [];
-          const labelVoltage   = top?.[7]?.v  || "Voltage";   // H1
-          const labelCurrent   = top?.[8]?.v  || "Current";   // I1
-          const labelFrequency = top?.[9]?.v  || "Frequency"; // J1
-          const labelPower     = top?.[10]?.v || "Power";     // K1
+          // ✅ อ่านหัวคอลัมน์จาก cols (เพราะ GViz ย้ายแถวแรกไปไว้ที่นี่)
+          const cols = jsonData.table.cols || [];
           
-          // หา <strong> ที่อยู่ก่อนหน้า infoBox6–9 แล้วเปลี่ยนข้อความ
+          const labelVoltage   = cols[7]?.label ?? cols[7]?.id ?? "Voltage";   // H1
+          const labelCurrent   = cols[8]?.label ?? cols[8]?.id ?? "Current";   // I1
+          const labelFrequency = cols[9]?.label ?? cols[9]?.id ?? "Frequency"; // J1
+          const labelPower     = cols[10]?.label ?? cols[10]?.id ?? "Power";   // K1
+          
+          // อัปเดต <strong> โดยเล็งพี่น้องก่อนหน้า #infoBox6–9
           const s6 = document.querySelector("#infoBox6")?.previousElementSibling;
           const s7 = document.querySelector("#infoBox7")?.previousElementSibling;
           const s8 = document.querySelector("#infoBox8")?.previousElementSibling;
