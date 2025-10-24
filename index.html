@@ -2909,10 +2909,10 @@ async function updateSketchfabByAnno(annoInput){
       // ---------- NEW: mapping index ตามคำใน cameraId ----------
       function pickIndexByCamera(id) {
         const s = (id || "").toLowerCase();
-        if (s.includes("aircondenser")) return { base: 7,  suffix: ["V","A","Hz","kW"] }; // H..K
-        if (s.includes("cctv"))        return { base: 3,  suffix: ["","","",""]        }; // D..G
-        if (s.includes("water"))       return { base: 11, suffix: ["","","",""]        }; // L..O
-        if (s.includes("air"))         return { base: 15, suffix: ["","","",""]        }; // P..S
+        if (s.includes("elect")) return { base: 7,  suffix: ["V","A","Hz","kW"] }; // H..K
+        if (s.includes("cctv"))        return { base: 3,  suffix: ["Event(s)","Event(s)","Event(s)","Event(s)"]        }; // D..G
+        if (s.includes("water"))       return { base: 11, suffix: ["L/min","Days","Months","L"]        }; // L..O
+        if (s.includes("air"))         return { base: 15, suffix: ["C","%RH","ug","ppm"]        }; // P..S
         // ค่าเริ่มต้น (กรณีไม่เข้าเงื่อนไขใด)
         return { base: 7, suffix: ["V","A","Hz","kW"] };
       }
