@@ -2900,6 +2900,26 @@ async function updateSketchfabByAnno(annoInput){
           const jsonData = JSON.parse(data.substr(47).slice(0, -2));
           const rows = jsonData.table.rows;
 
+          // ⬇️ วางบล็อกนี้ต่อจาก const rows = jsonData.table.rows; ได้เลย
+          // อัปเดต Label จาก H1–K1 (index 7–10 ของแถวแรกในชีต)
+          const top = rows?.[0]?.c || [];
+          const labelVoltage   = top?.[7]?.v  || "Voltage";   // H1
+          const labelCurrent   = top?.[8]?.v  || "Current";   // I1
+          const labelFrequency = top?.[9]?.v  || "Frequency"; // J1
+          const labelPower     = top?.[10]?.v || "Power";     // K1
+          
+          // หา <strong> ที่อยู่ก่อนหน้า infoBox6–9 แล้วเปลี่ยนข้อความ
+          const s6 = document.querySelector("#infoBox6")?.previousElementSibling;
+          const s7 = document.querySelector("#infoBox7")?.previousElementSibling;
+          const s8 = document.querySelector("#infoBox8")?.previousElementSibling;
+          const s9 = document.querySelector("#infoBox9")?.previousElementSibling;
+          
+          if (s6) s6.textContent = labelVoltage;
+          if (s7) s7.textContent = labelCurrent;
+          if (s8) s8.textContent = labelFrequency;
+          if (s9) s9.textContent = labelPower;
+          /////////////
+
           for (let i = 0; i < rows.length; i++) {
             const row = rows[i].c;
             if (row[0] && row[0].v === cameraId) {
