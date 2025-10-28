@@ -1466,6 +1466,62 @@ body.modal-open {
   right: 6px;
   bottom: 6px;
 }
+
+  .model-thumb {
+    width: 320px;
+    max-width: 100%;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    transition: transform .15s ease;
+  }
+  .model-thumb:hover { transform: translateY(-2px); }
+
+  /* Overlay เต็มหน้า */
+  .model3d-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+  }
+  .model3d-overlay.show { display: flex; }
+
+  /* กล่องโมเดล */
+  .model3d-dialog {
+    position: relative;
+    width: min(1200px, 96vw);
+    height: min(80vh, 900px);
+    background: #0b0b0b;
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.35);
+    overflow: hidden;
+  }
+
+  /* ปุ่มปิด & ปุ่มเต็มจอ */
+  .model3d-close, .model3d-full {
+    position: absolute; top: 10px;
+    background: rgba(255,255,255,.12);
+    color: #fff; border: 0; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 18px;
+    backdrop-filter: blur(4px);
+  }
+  .model3d-close { right: 10px; }
+  .model3d-full  { right: 56px; }
+
+  /* ตัว iframe ใหญ่เต็มกล่อง + อัตราส่วน 16:9 ยืดหยุ่น */
+  .model3d-wrap {
+    position: absolute; inset: 0;
+  }
+  #sketchfabModel {
+    width: 100%; height: 100%; border: 0;
+  }
+
+  @media (max-width: 640px) {
+    .model3d-dialog { width: 100%; height: 90vh; border-radius: 12px; }
+  }
     
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -1490,17 +1546,36 @@ body.modal-open {
     <div class="cctv-col-center">
       <div id="CCTV9" class="glass-card">
 
-        <!-- 🔽 3D Model อยู่ถัดลงมาจากรูป -->
-        <div class="model3d-wrap">
-          <iframe
-            id="sketchfabModel"
-            title="3D Device Model"
-            allow="autoplay; fullscreen; xr-spatial-tracking"
-            allowfullscreen
-            loading="lazy"
-            src="">
-          </iframe>
-        </div>
+        
+<!-- Thumbnail ที่ใช้คลิกเปิดโมเดล -->
+<img
+  class="model-thumb"
+  src="thumb.jpg"
+  alt="เปิดโมเดล 3D"
+  data-model-url="https://sketchfab.com/models/<YOUR_MODEL_UID>/embed?autostart=1&ui_infos=0&ui_controls=1&ui_watermark=0"
+/>
+
+<!-- 🔽 Overlay สำหรับโชว์โมเดลใหญ่ -->
+<div class="model3d-overlay" id="model3dOverlay" aria-hidden="true">
+  <div class="model3d-dialog" role="dialog" aria-modal="true">
+    <button class="model3d-close" id="closeModelBtn" aria-label="ปิด">✕</button>
+    <button class="model3d-full" id="fullModelBtn" aria-label="เต็มจอ">⤢</button>
+
+    <!-- 🔽 3D Model อยู่ถัดลงมาจากรูป -->
+    <div class="model3d-wrap">
+      <iframe
+        id="sketchfabModel"
+        title="3D Device Model"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        allowfullscreen
+        loading="lazy"
+        src="">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+        
 
     <!-- ▶ ป้ายเข้า-ออก-คงอยู่ -->
     <div class="io-pill">
@@ -5041,6 +5116,62 @@ function runDemo(){
     }
   }
   </script>
+
+  <script>
+  // อ้างอิง element หลัก
+  const overlay   = document.getElementById('model3dOverlay');
+  const iframe    = document.getElementById('sketchfabModel');
+  const thumb     = document.querySelector('.model-thumb');
+  const btnClose  = document.getElementById('closeModelBtn');
+  const btnFull   = document.getElementById('fullModelBtn');
+
+  // เปิด Overlay + ใส่ src ให้ iframe เมื่อคลิก thumbnail
+  thumb.addEventListener('click', () => {
+    const url = thumb.getAttribute('data-model-url');
+    if (iframe.src !== url) iframe.src = url; // set ครั้งแรกหรือเปลี่ยนโมเดล
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+  });
+
+  // ปิด Overlay
+  function closeOverlay() {
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    // ถ้าต้องการหยุดเล่น/ประหยัดทรัพยากร: ล้าง src (optional)
+    // iframe.src = '';
+  }
+  btnClose.addEventListener('click', closeOverlay);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeOverlay(); // คลิกพื้นหลังเพื่อปิด
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('show')) closeOverlay();
+  });
+
+  // ปุ่ม Fullscreen (ใช้ Fullscreen API)
+  btnFull.addEventListener('click', async () => {
+    try {
+      const container = document.querySelector('.model3d-dialog');
+      if (!document.fullscreenElement) {
+        await container.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.warn('Fullscreen error:', err);
+    }
+  });
+
+  // ถ้าคุณมีหลาย thumbnail ให้ใช้ delegation นี้แทน:
+  // document.addEventListener('click', (e) => {
+  //   const t = e.target.closest('.model-thumb');
+  //   if (!t) return;
+  //   const url = t.getAttribute('data-model-url');
+  //   if (iframe.src !== url) iframe.src = url;
+  //   overlay.classList.add('show');
+  //   overlay.setAttribute('aria-hidden', 'false');
+  // });
+</script>
 
 </body>
 </html>
