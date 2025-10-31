@@ -2961,13 +2961,43 @@ async function updateSketchfabByAnno(annoInput){
               if (modalImg1 && img1) modalImg1.src = img1;
               document.getElementById("datetime1").innerText = text1;
               
-              
+
               // กล้องที่กำลังเลือก
-              const img9  = row[2]?.v || '';
-              document.getElementById("name9").innerText = text1_2;
+              const img9 = row[2]?.v || '';
+              const name9 = row[23]?.v || 'ไม่พบข้อมูล';
+              const time9 = row[1]?.v || 'ไม่พบข้อมูล';
+              
+              document.getElementById("name9").innerText = name9;
+              document.getElementById("datetime9").innerText = time9;
+              
               const modalImg9 = document.getElementById("modalImg9");
-              if (modalImg9 && img9) modalImg9.src = img9;
-              document.getElementById("datetime9").innerText = text1;
+              
+              // 🔹 ลบ element เดิมถ้ามี (ป้องกันซ้ำ)
+              const existingVideo = document.getElementById("video9");
+              if (existingVideo) existingVideo.remove();
+              
+              // 🔹 ตรวจสอบรูปแบบ input
+              if (img9.startsWith("http://127.0.0.1:8889/")) {
+                // 🟢 เป็น live stream → สร้าง iframe แทน img
+                const iframe = document.createElement("iframe");
+                iframe.id = "video9";
+                iframe.src = img9;
+                iframe.allow = "autoplay; fullscreen";
+                iframe.style.width = "100%";
+                iframe.style.height = "auto";
+                iframe.style.aspectRatio = "16 / 9";
+                iframe.style.border = "0";
+                iframe.style.borderRadius = "12px";
+              
+                // ซ่อนภาพนิ่ง
+                modalImg9.style.display = "none";
+                // แทรกวิดีโอแทน
+                modalImg9.parentNode.insertBefore(iframe, modalImg9);
+              } else if (img9.startsWith("https://lh3.googleusercontent.com/")) {
+                // 🖼️ เป็นภาพนิ่ง → ใช้ img ปกติ
+                modalImg9.src = img9;
+                modalImg9.style.display = "block";
+              }
               
             // กล้องที่กำลังเลือก (ด้านล่างอันใหญ่)
               const img10  = row[2]?.v || '';
