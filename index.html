@@ -1547,18 +1547,10 @@ body.modal-open {
         </div>
 
         <h32 id="name9">-</h32>
-        <!-- 🔹 ระบบภาพนิ่ง + วิดีโอ Live -->
-        <div id="camera9-wrapper" style="position:relative; width:100%; aspect-ratio:16/9; background:#000; border-radius:12px; overflow:hidden;">
-          <iframe
-            id="videoStream9"
-            src=""
-            style="width:100%; height:100%; border:0; display:none;"
-            allow="autoplay; fullscreen"
-          ></iframe>
-          <img id="modalImg9" alt="" style="width:100%; height:auto; object-fit:contain; display:block;">
-        </div>
+        <!-- รูปกล้อง -->
+        <img id="modalImg9" alt="">
         <h3 id="datetime9">-</h3>
-       
+        
   </div>
 </div>
 
@@ -5049,32 +5041,6 @@ function runDemo(){
     }
   }
   </script>
-
-  <script>
-    // ✅ ตรวจสอบการเชื่อมต่อ live stream (ถ้ามีให้โชว์วิดีโอแทนภาพนิ่ง)
-    async function initCamera9() {
-      const videoFrame = document.getElementById('videoStream9');
-      const img = document.getElementById('modalImg9');
-    
-      try {
-        const res = await fetch('http://127.0.0.1:8889/cam1/', { method: 'HEAD', mode: 'no-cors' });
-        // ถ้าสตรีมมีอยู่ — สลับเป็น iframe
-        videoFrame.src = 'http://127.0.0.1:8889/cam1/';
-        videoFrame.style.display = 'block';
-        img.style.display = 'none';
-        console.log('🎥 Camera9: showing live stream');
-      } catch (err) {
-        // ถ้าไม่มีวิดีโอ — ใช้ภาพนิ่งแทน
-        videoFrame.style.display = 'none';
-        img.style.display = 'block';
-        console.log('🖼️ Camera9: showing static image');
-      }
-    }
-    
-    // เรียกเมื่อโหลดเสร็จ
-    document.addEventListener('DOMContentLoaded', initCamera9);
-    </script>
-
 
 </body>
 </html>
