@@ -3065,10 +3065,7 @@ async function updateSketchfabByAnno(annoInput){
               const img2  = row2[2]?.v || '';
               const text2 = row2[1]?.v || 'ไม่พบข้อมูล';
               const text2_2 = row2[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name2").innerText = text2_2;
-              const modalImg2 = document.getElementById("modalImg2");
-              if (modalImg2 && img2) modalImg2.src = img2;
-              document.getElementById("datetime2").innerText = text2;
+              setCameraDisplay(2, row2[2]?.v, row2[23]?.v, row2[1]?.v);
               
               
               // กล้อง 3 (ถัดแถว)
@@ -3076,21 +3073,15 @@ async function updateSketchfabByAnno(annoInput){
               const img3  = row3[2]?.v || '';
               const text3 = row3[1]?.v || 'ไม่พบข้อมูล';
               const text3_2 = row3[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name3").innerText = text3_2;
-              const modalImg3 = document.getElementById("modalImg3");
-              if (modalImg3 && img3) modalImg3.src = img3;
-              document.getElementById("datetime3").innerText = text3;
-              
+              setCameraDisplay(3, row3[2]?.v, row3[23]?.v, row3[1]?.v);
+          
               
               // กล้อง 4 (ถัดแถว)
               const row4  = rows[i+3]?.c || [];
               const img4  = row4[2]?.v || '';
               const text4 = row4[1]?.v || 'ไม่พบข้อมูล';
               const text4_2 = row4[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name4").innerText = text4_2;
-              const modalImg4 = document.getElementById("modalImg4");
-              if (modalImg4 && img4) modalImg4.src = img4;
-              document.getElementById("datetime4").innerText = text4;
+              setCameraDisplay(4, row4[2]?.v, row4[23]?.v, row4[1]?.v);
               
               
               // กล้อง 5 (ถัดแถว)
@@ -3098,21 +3089,14 @@ async function updateSketchfabByAnno(annoInput){
               const img5  = row5[2]?.v || '';
               const text5 = row5[1]?.v || 'ไม่พบข้อมูล';
               const text5_2 = row5[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name5").innerText = text5_2;
-              const modalImg5 = document.getElementById("modalImg5");
-              if (modalImg5 && img5) modalImg5.src = img5;
-              document.getElementById("datetime5").innerText = text5;
-              
+              setCameraDisplay(5, row5[2]?.v, row5[23]?.v, row5[1]?.v);
 
               // กล้อง 6 (ถัดแถว)
               const row6  = rows[i+5]?.c || [];
               const img6  = row6[2]?.v || '';
               const text6 = row6[1]?.v || 'ไม่พบข้อมูล';
               const text6_2 = row6[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name6").innerText = text6_2;
-              const modalImg6 = document.getElementById("modalImg6");
-              if (modalImg6 && img6) modalImg6.src = img6;
-              document.getElementById("datetime6").innerText = text6;
+              setCameraDisplay(6, row6[2]?.v, row6[23]?.v, row6[1]?.v);
               
               
               // กล้อง 7 (ถัดแถว)
@@ -3120,10 +3104,7 @@ async function updateSketchfabByAnno(annoInput){
               const img7  = row7[2]?.v || '';
               const text7 = row7[1]?.v || 'ไม่พบข้อมูล';
               const text7_2 = row7[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name7").innerText = text7_2;
-              const modalImg7 = document.getElementById("modalImg7");
-              if (modalImg7 && img7) modalImg7.src = img7;
-              document.getElementById("datetime7").innerText = text7;
+              setCameraDisplay(7, row7[2]?.v, row7[23]?.v, row7[1]?.v);
               
               
               // กล้อง 8 (ถัดแถว)
@@ -3131,10 +3112,7 @@ async function updateSketchfabByAnno(annoInput){
               const img8  = row8[2]?.v || '';
               const text8 = row8[1]?.v || 'ไม่พบข้อมูล';
               const text8_2 = row8[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name8").innerText = text8_2;
-              const modalImg8 = document.getElementById("modalImg8");
-              if (modalImg8 && img8) modalImg8.src = img8;
-              document.getElementById("datetime8").innerText = text8;
+              setCameraDisplay(8, row8[2]?.v, row8[23]?.v, row8[1]?.v);
               
                 const para1 = row[3]?.v ?? 'ไม่พบข้อมูล';
                 const para2 = row[4]?.v ?? 'ไม่พบข้อมูล';
