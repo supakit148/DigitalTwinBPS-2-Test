@@ -2891,6 +2891,48 @@ async function updateSketchfabByAnno(annoInput){
         return Math.ceil(n * 100) / 100;
     }
 
+    // ✅ ฟังก์ชันตรวจสอบและแสดงภาพหรือวิดีโอ
+      function setCameraDisplay(cameraIndex, imgSrc, name, datetime) {
+        const modalImg = document.getElementById(`modalImg${cameraIndex}`);
+        const nameEl = document.getElementById(`name${cameraIndex}`);
+        const timeEl = document.getElementById(`datetime${cameraIndex}`);
+        
+        if (!modalImg) return; // ถ้าไม่มี element ก็ข้าม
+      
+        // อัปเดตชื่อและเวลา
+        if (nameEl) nameEl.innerText = name || '-';
+        if (timeEl) timeEl.innerText = datetime || '-';
+      
+        // ลบวิดีโอเดิมก่อน
+        const existingVideo = document.getElementById(`video${cameraIndex}`);
+        if (existingVideo) existingVideo.remove();
+      
+        // ✅ ตรวจสอบประเภทของ URL
+        if (imgSrc && imgSrc.startsWith("http://127.0.0.1:8889/")) {
+          // 🟢 เป็น Live Stream
+          const iframe = document.createElement("iframe");
+          iframe.id = `video${cameraIndex}`;
+          iframe.src = imgSrc;
+          iframe.allow = "autoplay; fullscreen";
+          iframe.style.width = "100%";
+          iframe.style.height = "auto";
+          iframe.style.aspectRatio = "16/9";
+          iframe.style.border = "0";
+          iframe.style.borderRadius = "12px";
+      
+          modalImg.style.display = "none";
+          modalImg.parentNode.insertBefore(iframe, modalImg);
+        } else if (imgSrc && imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
+          // 🖼️ เป็นภาพนิ่ง
+          modalImg.src = imgSrc;
+          modalImg.style.display = "block";
+        } else {
+          // ❌ ไม่พบลิงก์ที่ใช้ได้
+          modalImg.src = "";
+          modalImg.style.display = "none";
+        }
+      }
+
     function getTextFromGoogleSheet(cameraId) {
       const sheetID = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
       const sheetName = "Data_EachFloor";
@@ -2954,23 +2996,15 @@ async function updateSketchfabByAnno(annoInput){
               
               // กล้อง 1
               const img1  = row[2]?.v || '';
-              const text1 = row[1]?.v || 'ไม่พบข้อมูล';
-              const text1_2 = row[23]?.v || 'ไม่พบข้อมูล';
-              document.getElementById("name1").innerText = text1_2;
-              const modalImg1 = document.getElementById("modalImg1");
-              if (modalImg1 && img1) modalImg1.src = img1;
-              document.getElementById("datetime1").innerText = text1;
-              
+              const time1 = row[1]?.v || 'ไม่พบข้อมูล';
+              const name1 = row[23]?.v || 'ไม่พบข้อมูล';
+              setCameraDisplay(1, row[2]?.v, row[23]?.v, row[1]?.v);
 
               // กล้องที่กำลังเลือก
               const img9 = row[2]?.v || '';
               const name9 = row[23]?.v || 'ไม่พบข้อมูล';
               const time9 = row[1]?.v || 'ไม่พบข้อมูล';
-              
-              document.getElementById("name9").innerText = name9;
-              document.getElementById("datetime9").innerText = time9;
-              
-              const modalImg9 = document.getElementById("modalImg9");
+              setCameraDisplay(9, row[2]?.v, row[23]?.v, row[1]?.v);
               
               // 🔹 ลบ element เดิมถ้ามี (ป้องกันซ้ำ)
               const existingVideo = document.getElementById("video9");
