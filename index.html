@@ -3005,6 +3005,13 @@ async function updateSketchfabByAnno(annoInput){
               const name9 = row[23]?.v || 'ไม่พบข้อมูล';
               const time9 = row[1]?.v || 'ไม่พบข้อมูล';
               setCameraDisplay(9, row[2]?.v, row[23]?.v, row[1]?.v);
+
+              // กล้อง 2 (ถัดแถว)
+              const row2  = rows[i+1]?.c || [];
+              const img2  = row2[2]?.v || '';
+              const text2 = row2[1]?.v || 'ไม่พบข้อมูล';
+              const text2_2 = row2[23]?.v || 'ไม่พบข้อมูล';
+              setCameraDisplay(2, row2[2]?.v, row2[23]?.v, row2[1]?.v);
               
               // 🔹 ลบ element เดิมถ้ามี (ป้องกันซ้ำ)
               const existingVideo = document.getElementById("video9");
@@ -3059,14 +3066,6 @@ async function updateSketchfabByAnno(annoInput){
                   console.warn("Write Cache failed:", err);
                 }
               })();   
-
-              // กล้อง 2 (ถัดแถว)
-              const row2  = rows[i+1]?.c || [];
-              const img2  = row2[2]?.v || '';
-              const text2 = row2[1]?.v || 'ไม่พบข้อมูล';
-              const text2_2 = row2[23]?.v || 'ไม่พบข้อมูล';
-              setCameraDisplay(2, row2[2]?.v, row2[23]?.v, row2[1]?.v);
-              
               
               // กล้อง 3 (ถัดแถว)
               const row3  = rows[i+2]?.c || [];
