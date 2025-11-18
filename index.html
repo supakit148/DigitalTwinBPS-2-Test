@@ -2892,46 +2892,47 @@ async function updateSketchfabByAnno(annoInput){
     }
 
     // ✅ ฟังก์ชันตรวจสอบและแสดงภาพหรือวิดีโอ
-      function setCameraDisplay(cameraIndex, imgSrc, name, datetime) {
+    function setCameraDisplay(cameraIndex, imgSrc, name, datetime) {
         const modalImg = document.getElementById(`modalImg${cameraIndex}`);
         const nameEl = document.getElementById(`name${cameraIndex}`);
         const timeEl = document.getElementById(`datetime${cameraIndex}`);
-        
-        if (!modalImg) return; // ถ้าไม่มี element ก็ข้าม
-      
-        // อัปเดตชื่อและเวลา
+    
+        if (!modalImg) return; // If no element exists, exit early.
+    
+        // Update name and datetime
         if (nameEl) nameEl.innerText = name || '-';
         if (timeEl) timeEl.innerText = datetime || '-';
-      
-        // ลบวิดีโอเดิมก่อน
+    
+        // Remove existing video if present
         const existingVideo = document.getElementById(`video${cameraIndex}`);
         if (existingVideo) existingVideo.remove();
-      
-        // ✅ ตรวจสอบประเภทของ URL
-        if (imgSrc && imgSrc.startsWith("http://127.0.0.1:8889/")) {
-          // 🟢 เป็น Live Stream
-          const iframe = document.createElement("iframe");
-          iframe.id = `video${cameraIndex}`;
-          iframe.src = imgSrc;
-          iframe.allow = "autoplay; fullscreen";
-          iframe.style.width = "100%";
-          iframe.style.height = "auto";
-          iframe.style.aspectRatio = "16/9";
-          iframe.style.border = "0";
-          iframe.style.borderRadius = "12px";
-      
-          modalImg.style.display = "none";
-          modalImg.parentNode.insertBefore(iframe, modalImg);
+    
+        // Check if the URL is a stream or an image
+        if (imgSrc && imgSrc.startsWith("http://192.168.100.98:8080")) {
+            // It's a live stream, use iframe to embed
+            const iframe = document.createElement("iframe");
+            iframe.id = `video${cameraIndex}`;
+            iframe.src = imgSrc;
+            iframe.allow = "autoplay; fullscreen";
+            iframe.style.width = "100%";
+            iframe.style.height = "auto";
+            iframe.style.aspectRatio = "16/9";
+            iframe.style.border = "0";
+            iframe.style.borderRadius = "12px";
+    
+            modalImg.style.display = "none"; // Hide the image
+            modalImg.parentNode.insertBefore(iframe, modalImg); // Insert iframe in place of the image
         } else if (imgSrc && imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
-          // 🖼️ เป็นภาพนิ่ง
-          modalImg.src = imgSrc;
-          modalImg.style.display = "block";
+            // It's a static image, display it normally
+            modalImg.src = imgSrc;
+            modalImg.style.display = "block";
         } else {
-          // ❌ ไม่พบลิงก์ที่ใช้ได้
-          modalImg.src = "";
-          modalImg.style.display = "none";
+            // Invalid or unsupported URL
+            modalImg.src = "";
+            modalImg.style.display = "none";
         }
-      }
+    }
+
 
     function getTextFromGoogleSheet(cameraId) {
       const sheetID = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
