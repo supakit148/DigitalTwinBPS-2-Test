@@ -2893,45 +2893,47 @@ async function updateSketchfabByAnno(annoInput){
 
     // ✅ ฟังก์ชันตรวจสอบและแสดงภาพหรือวิดีโอ
       function setCameraDisplay(cameraIndex, imgSrc, name, datetime) {
-        const modalImg = document.getElementById(`modalImg${cameraIndex}`);
-        const nameEl = document.getElementById(`name${cameraIndex}`);
-        const timeEl = document.getElementById(`datetime${cameraIndex}`);
+          const modalImg = document.getElementById(`modalImg${cameraIndex}`);
+          const nameEl = document.getElementById(`name${cameraIndex}`);
+          const timeEl = document.getElementById(`datetime${cameraIndex}`);
         
-        if (!modalImg) return; // ถ้าไม่มี element ก็ข้าม
-      
-        // อัปเดตชื่อและเวลา
-        if (nameEl) nameEl.innerText = name || '-';
-        if (timeEl) timeEl.innerText = datetime || '-';
-      
-        // ลบวิดีโอเดิมก่อน
-        const existingVideo = document.getElementById(`video${cameraIndex}`);
-        if (existingVideo) existingVideo.remove();
-      
-        // ✅ ตรวจสอบประเภทของ URL
-        if (imgSrc && imgSrc.startsWith("http://192.168.100.98:8080/")) {
-          // 🟢 เป็น Live Stream
-          const iframe = document.createElement("iframe");
-          iframe.id = `video${cameraIndex}`;
-          iframe.src = imgSrc;
-          iframe.allow = "autoplay; fullscreen";
-          iframe.style.width = "100%";
-          iframe.style.height = "auto";
-          iframe.style.aspectRatio = "16/9";
-          iframe.style.border = "0";
-          iframe.style.borderRadius = "12px";
-      
-          modalImg.style.display = "none";
-          modalImg.parentNode.insertBefore(iframe, modalImg);
-        } else if (imgSrc && imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
-          // 🖼️ เป็นภาพนิ่ง
-          modalImg.src = imgSrc;
-          modalImg.style.display = "block";
-        } else {
-          // ❌ ไม่พบลิงก์ที่ใช้ได้
-          modalImg.src = "";
-          modalImg.style.display = "none";
+          // อัปเดตชื่อและเวลา
+          if (nameEl) nameEl.innerText = name || '-';
+          if (timeEl) timeEl.innerText = datetime || '-';
+        
+          // ลบ video/iframe ตัวเดิม
+          const oldIframe = document.getElementById(`video${cameraIndex}`);
+          if (oldIframe) oldIframe.remove();
+        
+          // 👉 ถ้าเป็น URL ของ Live Stream MJPEG
+          if (imgSrc.startsWith("http://192.168.100.98:8080")) {
+            const iframe = document.createElement("iframe");
+            iframe.id = `video${cameraIndex}`;
+            iframe.src = imgSrc;
+            iframe.allow = "autoplay";
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "0";
+            iframe.style.borderRadius = "12px";
+        
+            // ซ่อน <img>
+            modalImg.style.display = "none";
+        
+            // แทรก iframe ก่อน <img>
+            modalImg.parentNode.insertBefore(iframe, modalImg);
+            return;
+          }
+        
+          // 👉 ถ้าเป็นภาพนิ่งจาก Google Drive
+          if (imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
+            modalImg.src = imgSrc;
+            modalImg.style.display = "block";  // แสดง <img>
+            return;
+          }
+        
+          // 👉 ถ้าไม่พบ URL ที่ถูกต้อง (ไม่ใช่ MJPEG หรือ ภาพนิ่ง)
+          modalImg.style.display = "none"; // ซ่อนภาพ
         }
-      }
 
     function getTextFromGoogleSheet(cameraId) {
       const sheetID = "1pG8ldAgtHsOzlVxjITuBp2XCS77Sdk15fvmR-YU-MDg";
