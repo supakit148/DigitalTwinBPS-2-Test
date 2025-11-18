@@ -2908,7 +2908,7 @@ async function updateSketchfabByAnno(annoInput){
         if (existingVideo) existingVideo.remove();
       
         // ✅ ตรวจสอบประเภทของ URL
-        if (imgSrc && imgSrc.startsWith("http://127.0.0.1:8889/")) {
+        if (imgSrc && imgSrc.startsWith("http://192.168.100.98:8080/")) {
           // 🟢 เป็น Live Stream
           const iframe = document.createElement("iframe");
           iframe.id = `video${cameraIndex}`;
@@ -3018,7 +3018,7 @@ async function updateSketchfabByAnno(annoInput){
               if (existingVideo) existingVideo.remove();
               
               // 🔹 ตรวจสอบรูปแบบ input
-              if (img9.startsWith("http://127.0.0.1:8889/")) {
+              if (img9.startsWith("http://192.168.100.98:8080/")) {
                 // 🟢 เป็น live stream → สร้าง iframe แทน img
                 const iframe = document.createElement("iframe");
                 iframe.id = "video9";
