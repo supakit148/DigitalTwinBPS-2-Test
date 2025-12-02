@@ -25,9 +25,6 @@
       --top-h: 64px;     /* ความสูง .top */
       --left-w: 320px;   /* ความกว้าง .left */
       --right-w: 300px;  /* ความกว้างที่กินจริงของ .right */
-      
-          /* 👇 อันนี้คือสเกลรวมของทั้ง UI */
-      --ui-scale: 0.5;   /* 0.5 ≈ เทียบเท่า zoom 50% */
     }
 
     html, body {
@@ -40,19 +37,6 @@
       font-family: 'Orbitron', sans-serif;
       font-variant-numeric: tabular-nums; /* ✅ เพิ่มบรรทัดนี้ */
       color: var(--text);
-    }
-
-    /* 👇 กล่องครอบทั้ง Dashboard เอาไว้ย่อทั้งหน้าด้วย transform */
-    .zoom-wrapper {
-      position: fixed;
-      inset: 0;                         /* top:0; right:0; bottom:0; left:0 */
-      transform: scale(var(--ui-scale));
-      transform-origin: top left;       /* ย่อจากมุมซ้ายบนเหมือน browser zoom */
-      
-      /* ขยายขนาดเนื้อหาให้เกิน viewport ตาม scale ที่ย่อไป */
-      width: calc(100% / var(--ui-scale));
-      height: calc(100% / var(--ui-scale));
-      overflow: hidden;
     }
 
     .layout {
@@ -1487,8 +1471,6 @@ body.modal-open {
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- 👇 ตัวนี้คือกล่องที่เราจะ scale แทนการใช้ browser zoom -->
-  <div class="zoom-wrapper">
   <div class="layout">
     <div class="background">
       <iframe id="skfb-frame" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
@@ -2555,8 +2537,7 @@ body.modal-open {
   <div class="audio-bars-container">
     <div class="bars" id="audioBars"></div>
   </div>
-    
-  </div>
+  
 
   <script>
     // Visualizer
@@ -5103,6 +5084,6 @@ function runDemo(){
     }
   }
   </script>
-  
+
 </body>
 </html>
