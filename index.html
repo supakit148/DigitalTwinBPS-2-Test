@@ -2956,6 +2956,11 @@ async function updateSketchfabByAnno(annoInput){
         if (s.includes("cctv"))        return { base: 3,  suffix: [" Event(s)"," Event(s)"," Event(s)"," Event(s)"]        }; // D..G
         if (s.includes("water"))       return { base: 11, suffix: ["L/min","Days","Months","L"]        }; // L..O
         if (s.includes("air"))         return { base: 15, suffix: ["C","%RH","µg/m³","µg/m³"]        }; // P..S
+
+        if (s.includes("Oximeter"))         return { base: 38, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        if (s.includes("BloodPressure"))         return { base: 39, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        if (s.includes("InfraredThermo"))         return { base: 42, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        
         // ค่าเริ่มต้น (กรณีไม่เข้าเงื่อนไขใด)
         return { base: 7, suffix: ["V","A","Hz","kW"] };
       }
