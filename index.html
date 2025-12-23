@@ -2952,9 +2952,9 @@ async function updateSketchfabByAnno(annoInput){
       // ---------- NEW: mapping index ตามคำใน cameraId ----------
       function pickIndexByCamera(id) {
         const s = (id || "").toLowerCase();
-        if (s.includes("Oximeter"))         return { base: 38, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
-        if (s.includes("BloodPressure"))         return { base: 39, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
-        if (s.includes("InfraredThermo"))         return { base: 42, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        if (s.includes("oximeter"))         return { base: 38, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        if (s.includes("bloodpressure"))         return { base: 39, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
+        if (s.includes("infraredthermo"))         return { base: 42, suffix: ["C","%RH","µg/m³","µg/m³"]        }; 
         
         if (s.includes("elect")) return { base: 7,  suffix: ["V","A","Hz","kW"] }; // H..K
         if (s.includes("cctv"))        return { base: 3,  suffix: [" Event(s)"," Event(s)"," Event(s)"," Event(s)"]        }; // D..G
