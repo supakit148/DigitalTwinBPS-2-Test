@@ -2897,37 +2897,34 @@ async function updateSketchfabByAnno(annoInput){
         const nameEl = document.getElementById(`name${cameraIndex}`);
         const timeEl = document.getElementById(`datetime${cameraIndex}`);
     
-        if (!modalImg) return; // If no element exists, exit early.
+        if (!modalImg) return;
     
-        // Update name and datetime
+        console.log("setCameraDisplay:", { cameraIndex, imgSrc });
+    
         if (nameEl) nameEl.innerText = name || '-';
         if (timeEl) timeEl.innerText = datetime || '-';
     
-        // Remove existing video if present
         const existingVideo = document.getElementById(`video${cameraIndex}`);
         if (existingVideo) existingVideo.remove();
     
-        // Check if the URL is a stream or an image
-        if (imgSrc && imgSrc.startsWith("http://192.168.100.98:8080")) {
-            // It's a live stream, use iframe to embed
-            const iframe = document.createElement("iframe");
-            iframe.id = `video${cameraIndex}`;
-            iframe.src = imgSrc;
-            iframe.allow = "autoplay; fullscreen";
-            iframe.style.width = "100%";
-            iframe.style.height = "auto";
-            iframe.style.aspectRatio = "16/9";
-            iframe.style.border = "0";
-            iframe.style.borderRadius = "12px";
+        const isStream = imgSrc && (
+            imgSrc.includes(":8080") ||
+            imgSrc.includes(":8888") ||
+            imgSrc.includes("/cam")
+        );
     
-            modalImg.style.display = "none"; // Hide the image
-            modalImg.parentNode.insertBefore(iframe, modalImg); // Insert iframe in place of the image
-        } else if (imgSrc && imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
-            // It's a static image, display it normally
+        if (isStream) {
+            console.log("STREAM DETECTED:", imgSrc);
+    
             modalImg.src = imgSrc;
             modalImg.style.display = "block";
+    
+        } else if (imgSrc && imgSrc.startsWith("https://lh3.googleusercontent.com/")) {
+    
+            modalImg.src = imgSrc;
+            modalImg.style.display = "block";
+    
         } else {
-            // Invalid or unsupported URL
             modalImg.src = "";
             modalImg.style.display = "none";
         }
